@@ -41,9 +41,10 @@ def create_app(test_config=None):
 
     @app.route('/accounts/create', methods=['POST'])
     def create_account():
-        first_name = request.get_json()['first_name']
-        last_name = request.get_json()['last_name']
-        init_balance = request.get_json()['balance']
+        body = request.get_json()
+        first_name = body.get("first_name", None)
+        last_name = body.get("last_name", None)
+        init_balance = int(body.get("balance", None))
 
         res_body = {}
 
@@ -55,13 +56,12 @@ def create_app(test_config=None):
             try:
                 new_account = Account(first_name=first_name,
                                       last_name=last_name, balance=init_balance)
-                db.session.add(new_account)
-                db.session.commit()
+                new_account.insert()
                 res_body['created'] = new_account.id
                 res_body['first_name'] = new_account.first_name
                 res_body['last_name'] = new_account.last_name
                 res_body['balance'] = new_account.balance
-                res_body['success']: True
+                res_body['success'] = True
 
                 return jsonify(res_body)
 

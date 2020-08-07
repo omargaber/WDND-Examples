@@ -29,3 +29,27 @@ class Account(db.Model):
     first_name = Column(String(), nullable=False)
     last_name = Column(String(), nullable=False)
     balance = Column(Integer, default=0)
+
+    def __init__(self, first_name, last_name, balance):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.balance = balance
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'balance': self.balance,
+        }

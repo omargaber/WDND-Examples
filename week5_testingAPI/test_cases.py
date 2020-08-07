@@ -18,8 +18,8 @@ class AccountTestCase(unittest.TestCase):
         setup_db(self.app, self.database_path)
 
         self.new_account = {
-            'first_name': 'Omar',
-            'last_name': 'Gaber',
+            'first_name': "Omar",
+            'last_name': "Gaber",
             'balance': 5000
         }
 
@@ -34,6 +34,23 @@ class AccountTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+
+    def test_404_access_undefined_route(self):
+        res = self.client().get('/bateekh')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
+    def test_create_account(self):
+        res = self.client().post('/accounts/create',
+                                 json=self.new_account)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        # self.assertEqual(account.format())
 
 
 # Make the tests conveniently executable
