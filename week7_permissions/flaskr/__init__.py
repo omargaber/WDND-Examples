@@ -113,17 +113,19 @@ def create_app(test_config=None):
 
         return auth_header[1]
 
-    def check_permission(permission, payload):
+    def check_permission(permissions, payload):
         if 'permissions' not in payload:
             abort(400)
         
-        if permission not in payload['permissions']:
-            abort(403)
+
+        for permission in permissions:
+            if permission not in payload['permissions']:
+                abort(403)
         
         return True
         
     
-    def requires_auth(permission=''):
+    def requires_auth(permissions=[]):
 
         def requires_auth_sub(f):
             @wraps(f)
@@ -134,7 +136,7 @@ def create_app(test_config=None):
                 except:
                     abort(401)
                 
-                check_permission(permission, payload)
+                check_permission(permissions, payload)
                 return f(payload, *args, **kwargs)
             return wrapper
         return requires_auth_sub
@@ -143,7 +145,7 @@ def create_app(test_config=None):
 
     # token = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikt1RTdhaHEtdjIyQnhJLUhKZlhoUSJ9.eyJpc3MiOiJodHRwczovL3dkbmQtdGVzdGluZy51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWYzNmFiMDdhMWI0MWYwMDY3ODE3OThmIiwiYXVkIjoic2Vzc2lvbiIsImlhdCI6MTU5NzUxNzcyOCwiZXhwIjoxNTk3NTI0OTI4LCJhenAiOiJ0cHNRdk9vNFpVdXluTzdVanhYRzloVjdHdUZzT0pGNyIsInNjb3BlIjoiIn0.rAvqDU-Hc91BKGrWcORucZbJOF3bXzhqdZTJlP_po4lzA78El_QDRj2wglJPCe69uEI1taVIwRHPVI8AEH5SNSZDrI1m9HVEYtAC6iGSP5JsCURlWooUwHOk8AKHs7FS2fJtK89SG6_GfXz-o1EUuKhjg10BuuucNod2BkTZ2VjU6fWjvy5AzjO3LSMt8Qrz5xNGzKv5SWce_ArrBFwfgww-15nGlQTl9JVLH8XifNb2XeIFzslQrnD0m9Z3n8ZdUjfBCUXvYfaUyXoeZkm93QDSRQc2B5_ZSto5_TgqBa0UJCneUKzAzQQZIf0j02-Q9Xhr0hSpt9JpBqdw3hLkDw
     @app.route('/')
-    @requires_auth('get:greeting')
+    @requires_auth(['get:greeting'])
     def index(jwt):
         return jsonify({
             'success': True,
@@ -255,6 +257,6 @@ def create_app(test_config=None):
             "success": False,
             "error": 403,
             "message": "Forbidden Access"
-        }), 401
+        }), 403
 
     return app
