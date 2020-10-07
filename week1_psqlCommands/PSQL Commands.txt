@@ -1,0 +1,31 @@
+To create database:
+createdb example
+
+
+To drop database:
+dropdb example
+
+To connect to a database:
+psql example
+
+
+Once you connect to a database, you can now create tables and interact with them
+
+To a list of all tables currently existing in a database:
+\dt;
+
+To see schema of a certain table in your database:
+\d example_table;
+
+To create table:
+create table clients (id SERIAL PRIMARY KEY, first_name VARCHAR NOT NULL);
+
+To create table with foreign key:
+create table contacts (id SERIAL PRIMARY KEY, contact_number INTEGER, client_id INTEGER, CONSTRAINT fk_client FOREIGN KEY(client_id) REFERENCES clients(id))
+
+To add data to table:
+INSERT INTO clients (first_name) values ('Mo Salah');
+INSERT INTO contact (contact_number, client_id) values (123456789, 1')
+
+To exit database shell:
+\q
