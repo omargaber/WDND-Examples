@@ -103,43 +103,11 @@ def withdraw(id):
 # DEPOSIT
 @app.route('/account/<id>/deposit', methods=['POST'])
 def deposit(id):
-    error = False
-    body = {}
-    try:
-        user_obj = Account.query.get(id)
-        old_balance = int(user_obj.balance)
-        withdraw_amount = eval(request.get_json()['amount'])
-        new_balance = old_balance + withdraw_amount
-        user_obj.balance = new_balance
-        db.session.commit()
-        body["balance"] = user_obj.balance
-    except:
-        db.session.rollback()
-        error = True
-        print(sys.exc_info())
-    finally:
-        db.session.close()
-
-    if error:
-        abort(400)
-    else:
-        return jsonify(body)
 
 
 # DELETE ACCOUNT
 @app.route('/account/<u_id>', methods=['DELETE'])
 def delete_account(u_id):
-    error = False
-    body = {}
-    try:
-        Account.query.filter_by(id=u_id).delete()
-        db.session.commit()
-    except:
-        db.session.rollback()
-    finally:
-        db.session.close()
-
-    return jsonify({'success': True})
 
 # CREATE SAVINGS ACCOUNT
 @app.route('/savings/<acc_id>/create', methods=['POST'])
